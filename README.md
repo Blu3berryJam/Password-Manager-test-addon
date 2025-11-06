@@ -1,4 +1,4 @@
-# Autofill Login — TypeScript Chrome Extension (scaffold)
+# Autofill — TypeScript Chrome Extension 
 
 wtyczka Chrome napisana w TypeScript z konfiguracją Vite + @crxjs/vite-plugin do autouzupełniania chaseł danymi testowymi.
 
