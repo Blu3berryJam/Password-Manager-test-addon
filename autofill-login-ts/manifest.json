@@ -1,0 +1,26 @@
+{
+  "manifest_version": 3,
+  "name": "Autofill Login (TS) - scaffold",
+  "short_name": "AutofillTS",
+  "version": "0.1.0",
+  "description": "Przykładowa wtyczka Chrome napisana w TypeScript (Manifest V3)",
+  "action": {
+    "default_title": "Autofill",
+    "default_popup": "src/popup/index.html"
+  },
+  "background": {
+    "service_worker": "src/background.ts"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["src/content.ts"]
+    }
+  ],
+  "permissions": ["storage", "activeTab", "scripting"],
+  "icons": {
+    "16": "public/icons/icon16.svg",
+    "48": "public/icons/icon48.svg",
+    "128": "public/icons/icon128.svg"
+  }
+}

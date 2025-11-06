@@ -1,0 +1,12 @@
+{
+  "name": "autofill-login-ts",
+  "version": "1.0.0",
+  "description": "Chrome Extension do autouzupełniania loginu i hasła (TypeScript).",
+  "scripts": {
+    "build": "tsc --project tsconfig.json",
+    "watch": "tsc --watch"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.3"
+  }
+}
