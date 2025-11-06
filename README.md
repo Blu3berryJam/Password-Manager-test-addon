@@ -1,6 +1,6 @@
 # Autofill — TypeScript Chrome Extension 
 
-wtyczka Chrome napisana w TypeScript z konfiguracją Vite + @crxjs/vite-plugin do autouzupełniania chaseł danymi testowymi.
+wtyczka Chrome napisana w TypeScript do autouzupełniania chaseł danymi testowymi.
 
 Zawartość:
 - `manifest.json` — manifest MV3
