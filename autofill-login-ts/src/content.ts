@@ -25,7 +25,7 @@ class FormDetector {
 
   private observeForms() {
     const observer = new MutationObserver(() => {
-      this.scanForLoginContainers();
+      this.scanForForms();
     });
 
     observer.observe(document.body, {
@@ -33,52 +33,36 @@ class FormDetector {
       subtree: true
     });
 
-    this.scanForLoginContainers();
+    this.scanForForms();
   }
 
-  private scanForLoginContainers() {
+  private scanForForms() {
+    // Szukaj tradycyjnych formularzy <form>
     const forms = document.querySelectorAll('form');
     Array.from(forms).forEach((form, index) => {
       if (!form.hasAttribute('data-autofill-processed')) {
         form.setAttribute('data-autofill-processed', 'true');
-        this.processContainer(form, index, 'form');
+        this.processContainer(form, index);
       }
     });
 
-    const loginContainers = this.findLoginContainers();
-    loginContainers.forEach((container, index) => {
-      if (!container.hasAttribute('data-autofill-processed')) {
-        container.setAttribute('data-autofill-processed', 'true');
-        this.processContainer(container, index, 'div');
+    // Szukaj SPECJALNIE tylko div z id="form"
+    const formDivs = document.querySelectorAll('div#form');
+    Array.from(formDivs).forEach((div, index) => {
+      if (!div.hasAttribute('data-autofill-processed')) {
+        div.setAttribute('data-autofill-processed', 'true');
+        this.processContainer(div, index);
       }
     });
   }
 
-  private findLoginContainers(): Element[] {
-    const containers: Element[] = [];
-
-    const allContainers = document.querySelectorAll('div, section, .form, .login-container, #form, #login');
-    
-    allContainers.forEach(container => {
-      const inputs = container.querySelectorAll('input');
-      const hasUsername = Array.from(inputs).some(input => this.isUsernameField(input));
-      const hasPassword = Array.from(inputs).some(input => this.isPasswordField(input));
-      
-      if (hasUsername && hasPassword) {
-        containers.push(container);
-      }
-    });
-
-    return containers;
-  }
-
-  private processContainer(container: Element, index: number, type: string) {
-    console.log(`🔐 Processing ${type} container ${index}:`, container);
+  private processContainer(container: Element, index: number) {
+    console.log(`🔐 Processing container ${index}:`, container);
 
     const inputs = Array.from(container.querySelectorAll('input')) as HTMLInputElement[];
     const fields = this.findFieldsFromInputs(inputs);
     
-    console.log(`🔐 Found fields in ${type}:`, fields);
+    console.log(`🔐 Found fields:`, fields);
 
     if (fields.username && fields.password) {
       this.addAutofillButton(fields, container, index);
@@ -88,6 +72,7 @@ class FormDetector {
   private findFieldsFromInputs(inputs: HTMLInputElement[]): { username?: HTMLInputElement; password?: HTMLInputElement } {
     const fields: { username?: HTMLInputElement; password?: HTMLInputElement } = {};
 
+    // Najpierw znajdź pole password
     for (const input of inputs) {
       if (this.isPasswordField(input)) {
         fields.password = input;
@@ -95,6 +80,7 @@ class FormDetector {
       }
     }
 
+    // Potem znajdź pole username
     for (const input of inputs) {
       if (!fields.username && this.isUsernameField(input)) {
         fields.username = input;
@@ -169,7 +155,7 @@ class FormDetector {
     });
 
     container.parentNode?.insertBefore(button, container);
-    console.log('🔐 AutoFill button added to container!');
+    console.log('🔐 AutoFill button added!');
   }
 
   private async fillCredentials(fields: { username?: HTMLInputElement; password?: HTMLInputElement }) {
