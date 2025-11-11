@@ -1,3 +1,5 @@
+console.log('🔐 Password Autofill content script LOADED!');
+
 interface FormField {
   element: HTMLInputElement;
   type: 'username' | 'password';
@@ -5,6 +7,7 @@ interface FormField {
 
 class FormDetector {
   constructor() {
+    console.log('🔐 FormDetector initialized');
     this.observeForms();
   }
 
@@ -22,7 +25,7 @@ class FormDetector {
 
   private observeForms() {
     const observer = new MutationObserver(() => {
-      this.scanForForms();
+      this.scanForLoginContainers();
     });
 
     observer.observe(document.body, {
@@ -30,54 +33,88 @@ class FormDetector {
       subtree: true
     });
 
-    this.scanForForms();
+    this.scanForLoginContainers();
   }
 
-  private scanForForms() {
+  private scanForLoginContainers() {
+    // Szukaj tradycyjnych formularzy
     const forms = document.querySelectorAll('form');
-    
     Array.from(forms).forEach((form, index) => {
       if (!form.hasAttribute('data-autofill-processed')) {
         form.setAttribute('data-autofill-processed', 'true');
-        this.processForm(form as HTMLFormElement, index);
+        this.processContainer(form, index, 'form');
+      }
+    });
+
+    // Szukaj div-ów z polami login/hasło (jak Twój przykład)
+    const loginContainers = this.findLoginContainers();
+    loginContainers.forEach((container, index) => {
+      if (!container.hasAttribute('data-autofill-processed')) {
+        container.setAttribute('data-autofill-processed', 'true');
+        this.processContainer(container, index, 'div');
       }
     });
   }
 
-  private processForm(form: HTMLFormElement, formIndex: number) {
-    const fields = this.findFormFields(form);
+  private findLoginContainers(): Element[] {
+    const containers: Element[] = [];
+
+    // Szukaj elementów które mają pola username i password
+    const allContainers = document.querySelectorAll('div, section, .form, .login-container, #form, #login');
     
+    allContainers.forEach(container => {
+      const inputs = container.querySelectorAll('input');
+      const hasUsername = Array.from(inputs).some(input => this.isUsernameField(input));
+      const hasPassword = Array.from(inputs).some(input => this.isPasswordField(input));
+      
+      if (hasUsername && hasPassword) {
+        containers.push(container);
+      }
+    });
+
+    return containers;
+  }
+
+  private processContainer(container: Element, index: number, type: string) {
+    console.log(`🔐 Processing ${type} container ${index}:`, container);
+
+    const inputs = Array.from(container.querySelectorAll('input')) as HTMLInputElement[];
+    const fields = this.findFieldsFromInputs(inputs);
+    
+    console.log(`🔐 Found fields in ${type}:`, fields);
+
     if (fields.username && fields.password) {
-      this.addAutofillButton(fields, form, formIndex);
-      // USUNIĘTE: this.attemptAutoFill(fields); - nie auto-uzupełniaj automatycznie
+      this.addAutofillButton(fields, container, index);
     }
   }
 
-  private findFormFields(form: HTMLFormElement): { username?: HTMLInputElement; password?: HTMLInputElement } {
-    const inputs = form.querySelectorAll('input[type="text"], input[type="email"], input[type="password"], input:not([type])');
+  private findFieldsFromInputs(inputs: HTMLInputElement[]): { username?: HTMLInputElement; password?: HTMLInputElement } {
     const fields: { username?: HTMLInputElement; password?: HTMLInputElement } = {};
 
-    Array.from(inputs).forEach((input) => {
-      const element = input as HTMLInputElement;
-      
-      if (element.type === 'password' || this.isPasswordField(element)) {
-        fields.password = element;
-        return;
+    // Najpierw znajdź pole password
+    for (const input of inputs) {
+      if (this.isPasswordField(input)) {
+        fields.password = input;
+        break;
       }
+    }
 
-      if (!fields.username && this.isUsernameField(element)) {
-        fields.username = element;
+    // Potem znajdź pole username
+    for (const input of inputs) {
+      if (!fields.username && this.isUsernameField(input)) {
+        fields.username = input;
+        break;
       }
-    });
+    }
 
     return fields;
   }
 
   private isPasswordField(input: HTMLInputElement): boolean {
-    const name = input.name.toLowerCase();
-    const id = input.id.toLowerCase();
-    const placeholder = input.placeholder.toLowerCase();
-    const type = input.type.toLowerCase();
+    const name = (input.name || '').toLowerCase();
+    const id = (input.id || '').toLowerCase();
+    const placeholder = (input.placeholder || '').toLowerCase();
+    const type = (input.type || '').toLowerCase();
 
     const passwordIndicators = ['pass', 'pwd', 'hasło', 'password'];
     
@@ -90,26 +127,27 @@ class FormDetector {
   }
 
   private isUsernameField(input: HTMLInputElement): boolean {
-    const name = input.name.toLowerCase();
-    const id = input.id.toLowerCase();
-    const placeholder = input.placeholder.toLowerCase();
-    const type = input.type.toLowerCase();
+    const name = (input.name || '').toLowerCase();
+    const id = (input.id || '').toLowerCase();
+    const placeholder = (input.placeholder || '').toLowerCase();
+    const type = (input.type || '').toLowerCase();
 
     const usernameIndicators = [
       'user', 'login', 'email', 'username', 'account', 'auth', 
-      'name', 'id', 'identifier', 'uid', 'usr'
+      'name', 'id', 'identifier', 'uid', 'usr', 'mail'
     ];
 
     return usernameIndicators.some(indicator => 
       name.includes(indicator) || 
       id.includes(indicator) || 
       placeholder.includes(indicator) ||
-      (type === 'email')
+      (type === 'email') ||
+      (type === 'text' && (name.includes('user') || name.includes('login')))
     );
   }
 
-  private addAutofillButton(fields: { username?: HTMLInputElement; password?: HTMLInputElement }, form: HTMLFormElement, formIndex: number) {
-    const existingButton = form.previousElementSibling as HTMLElement;
+  private addAutofillButton(fields: { username?: HTMLInputElement; password?: HTMLInputElement }, container: Element, index: number) {
+    const existingButton = container.previousElementSibling as HTMLElement;
     if (existingButton && existingButton.classList.contains('autofill-button')) {
       return;
     }
@@ -126,18 +164,18 @@ class FormDetector {
       border-radius: 4px;
       cursor: pointer;
       font-size: 12px;
-      margin: 5px 0;
+      margin: 10px 0;
       font-family: inherit;
+      display: block;
     `;
 
     button.addEventListener('click', () => {
       this.fillCredentials(fields);
     });
 
-    form.parentNode?.insertBefore(button, form);
+    container.parentNode?.insertBefore(button, container);
+    console.log('🔐 AutoFill button added to container!');
   }
-
-  // USUNIĘTA: metoda attemptAutoFill - nie jest już potrzebna
 
   private async fillCredentials(fields: { username?: HTMLInputElement; password?: HTMLInputElement }) {
     const credentials = await this.getCredentials();
@@ -149,20 +187,20 @@ class FormDetector {
       fields.username.value = cred.username;
       fields.username.dispatchEvent(new Event('input', { bubbles: true }));
       fields.username.dispatchEvent(new Event('change', { bubbles: true }));
+      console.log('🔐 Filled username:', fields.username);
     }
     
     if (fields.password) {
       fields.password.value = cred.password;
       fields.password.dispatchEvent(new Event('input', { bubbles: true }));
       fields.password.dispatchEvent(new Event('change', { bubbles: true }));
+      console.log('🔐 Filled password:', fields.password);
     }
 
-    // Opcjonalnie: możesz dodać efekt wizualny po wypełnieniu
     this.showSuccessMessage(fields);
   }
 
   private showSuccessMessage(fields: { username?: HTMLInputElement; password?: HTMLInputElement }) {
-    // Tworzymy tymczasowy komunikat sukcesu
     const message = document.createElement('div');
     message.textContent = '✓ Dane wypełnione!';
     message.style.cssText = `
@@ -180,7 +218,6 @@ class FormDetector {
 
     document.body.appendChild(message);
 
-    // Usuwamy komunikat po 2 sekundach
     setTimeout(() => {
       if (message.parentNode) {
         message.parentNode.removeChild(message);
