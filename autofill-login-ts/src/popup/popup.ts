@@ -1,5 +1,3 @@
-
-
 interface StoredCredential {
   id: string;
   website: string;
@@ -8,10 +6,34 @@ interface StoredCredential {
   createdAt: Date;
 }
 
+// Get version from manifest
+async function getVersion() {
+  try {
+    const manifest = chrome.runtime.getManifest();
+    return manifest.version;
+  } catch (error) {
+    return '0.2.0'; // fallback
+  }
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+  console.log('Popup loaded');
+  
+  const version = await getVersion();
+  const versionElement = document.getElementById('version-info');
+  if (versionElement) {
+    versionElement.textContent = `Version ${version} (Alpha)`;
+  }
+  
+  await loadCredentials();
+  setupAutoFillToggle();
+  setupWebInterfaceButton();
+});
+
 document.addEventListener('DOMContentLoaded', async () => {
   await loadCredentials();
   setupAutoFillToggle();
-  setupManagePasswordsButton();
+  setupWebInterfaceButton();
 });
 
 async function loadCredentials() {
@@ -59,7 +81,7 @@ function setupAutoFillToggle() {
   }
 }
 
-function setupManagePasswordsButton() {
+function setupWebInterfaceButton() {
   const manageButton = document.getElementById('manage-passwords') as HTMLButtonElement;
   
   if (manageButton) {
@@ -94,7 +116,7 @@ function showComingSoonMessage() {
         max-width: 300px;
         box-shadow: 0 4px 12px rgba(0,0,0,0.2);
       ">
-        <h3 style="margin: 0 0 12px 0; color: #4285f4;">🚧 Funkcja w budowie</h3>
+        <h3 style="margin: 0 0 12px 0; color: #4285f4;"> Funkcja w budowie</h3>
         <p style="margin: 0 0 20px 0; color: #666; line-height: 1.4;">
           Panel zarządzania hasłami będzie dostępny w kolejnej wersji rozszerzenia.
         </p>

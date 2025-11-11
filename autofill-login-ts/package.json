@@ -1,7 +1,7 @@
 {
   "name": "password-autofill-extension",
-  "version": "1.0.0",
-  "description": "Autouzupełnianie formularzy login/hasło",
+  "version": "0.1.2",
+  "description": "Secure password management with intelligent autofill",
   "scripts": {
     "build": "webpack",
     "dev": "webpack --watch"

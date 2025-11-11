@@ -1,0 +1,147 @@
+body {
+  width: 350px;
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #f8f9fa;
+}
+
+.popup-container {
+  padding: 0;
+}
+
+.header {
+  background: #4285f4;
+  color: white;
+  padding: 16px;
+  text-align: center;
+}
+
+.header h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.section {
+  margin: 0;
+  padding: 16px;
+  border-bottom: 1px solid #e9ecef;
+  background: white;
+}
+
+.section:last-child {
+  border-bottom: none;
+}
+
+.description {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #495057;
+}
+
+.description strong {
+  color: #4285f4;
+}
+
+h4 {
+  margin: 0 0 12px 0;
+  font-size: 14px;
+  color: #212529;
+  font-weight: 600;
+}
+
+.credentials-list {
+  max-height: 120px;
+  overflow-y: auto;
+}
+
+.credential-item {
+  padding: 10px;
+  margin-bottom: 8px;
+  background: #f8f9fa;
+  border-radius: 6px;
+  border-left: 4px solid #4285f4;
+}
+
+.credential-website {
+  font-weight: bold;
+  font-size: 12px;
+  color: #4285f4;
+  margin-bottom: 4px;
+}
+
+.credential-username,
+.credential-password {
+  font-size: 11px;
+  color: #666;
+  margin: 2px 0;
+}
+
+.manage-button {
+  width: 100%;
+  padding: 12px;
+  background: #34a853;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.manage-button:hover {
+  background: #2d9349;
+}
+
+/* Switch toggle */
+.switch {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.switch input {
+  display: none;
+}
+
+.slider {
+  position: relative;
+  width: 40px;
+  height: 20px;
+  background-color: #ccc;
+  border-radius: 20px;
+  margin-right: 8px;
+  transition: .3s;
+}
+
+.slider:before {
+  content: "";
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  left: 2px;
+  top: 2px;
+  background-color: white;
+  transition: .3s;
+}
+
+input:checked + .slider {
+  background-color: #4285f4;
+}
+
+input:checked + .slider:before {
+  transform: translateX(20px);
+}
+
+.info {
+  text-align: center;
+  color: #6c757d;
+  font-size: 11px;
+  padding: 12px;
+  background: #f8f9fa;
+}
