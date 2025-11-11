@@ -6,6 +6,30 @@ interface StoredCredential {
   createdAt: Date;
 }
 
+// Get version from manifest
+async function getVersion() {
+  try {
+    const manifest = chrome.runtime.getManifest();
+    return manifest.version;
+  } catch (error) {
+    return '0.2.0'; // fallback
+  }
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+  console.log('Popup loaded');
+  
+  const version = await getVersion();
+  const versionElement = document.getElementById('version-info');
+  if (versionElement) {
+    versionElement.textContent = `Version ${version} (Alpha)`;
+  }
+  
+  await loadCredentials();
+  setupAutoFillToggle();
+  setupWebInterfaceButton();
+});
+
 document.addEventListener('DOMContentLoaded', async () => {
   console.log('Popup loaded');
   await loadCredentials();

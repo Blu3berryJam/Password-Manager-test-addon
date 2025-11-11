@@ -1,0 +1,1 @@
+chrome.runtime.onInstalled.addListener(()=>{console.log("Password Autofill Extension installed")}),chrome.runtime.onMessage.addListener((e,t,s)=>{if("getCredentials"===e.action)return s({credentials:[{id:"1",website:"any-website",username:"testLogin",password:"testPassword",createdAt:new Date}]}),!0});
