@@ -37,7 +37,6 @@ class FormDetector {
   }
 
   private scanForLoginContainers() {
-    // Szukaj tradycyjnych formularzy
     const forms = document.querySelectorAll('form');
     Array.from(forms).forEach((form, index) => {
       if (!form.hasAttribute('data-autofill-processed')) {
@@ -46,7 +45,6 @@ class FormDetector {
       }
     });
 
-    // Szukaj div-ów z polami login/hasło (jak Twój przykład)
     const loginContainers = this.findLoginContainers();
     loginContainers.forEach((container, index) => {
       if (!container.hasAttribute('data-autofill-processed')) {
@@ -59,7 +57,6 @@ class FormDetector {
   private findLoginContainers(): Element[] {
     const containers: Element[] = [];
 
-    // Szukaj elementów które mają pola username i password
     const allContainers = document.querySelectorAll('div, section, .form, .login-container, #form, #login');
     
     allContainers.forEach(container => {
@@ -91,7 +88,6 @@ class FormDetector {
   private findFieldsFromInputs(inputs: HTMLInputElement[]): { username?: HTMLInputElement; password?: HTMLInputElement } {
     const fields: { username?: HTMLInputElement; password?: HTMLInputElement } = {};
 
-    // Najpierw znajdź pole password
     for (const input of inputs) {
       if (this.isPasswordField(input)) {
         fields.password = input;
@@ -99,7 +95,6 @@ class FormDetector {
       }
     }
 
-    // Potem znajdź pole username
     for (const input of inputs) {
       if (!fields.username && this.isUsernameField(input)) {
         fields.username = input;
