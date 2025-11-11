@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="popup-container">
+    <div class="header">
+      <h3>🔐 Password Autofill</h3>
+    </div>
+    
+    <div class="section">
+      <p class="description">
+        Rozszerzenie do automatycznego wypełniania formularzy logowania. 
+        Kliknij przycisk <strong>"AutoFill"</strong> na stronach z formularzami, 
+        aby szybko wypełnić dane testowe.
+      </p>
+    </div>
+
+    <div class="section">
+      <h4>Dane testowe</h4>
+      <div id="credentials-list" class="credentials-list">
+        <!-- Dane testowe będą wstrzyknięte przez JavaScript -->
+      </div>
+    </div>
+
+    <div class="section">
+      <h4>Zarządzanie hasłami</h4>
+      <button id="manage-passwords" class="manage-button">
+        🗄️ Przejdź do panelu haseł
+      </button>
+    </div>
+
+    <div class="section">
+      <h4>Ustawienia</h4>
+      <label class="switch">
+        <input type="checkbox" id="autoFillToggle">
+        <span class="slider"></span>
+        Auto-uzupełnianie
+      </label>
+    </div>
+
+    <div class="info">
+      <small>Wersja testowa 0.1.2a</small>
+    </div>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>
