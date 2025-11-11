@@ -4,17 +4,17 @@ Rozszerzenie dla przeglądarek opartych na Chromium do automatycznego wypełnian
 
 Wersja: 0.1.2 (Alpha)
 
-## 📋 Funkcjonalności
-- ✅ Automatyczne wykrywanie pól formularzy (login/hasło)  
-- ✅ Przyciski "🔐 AutoFill" nad wykrytymi formularzami  
-- ✅ Wypełnianie danymi testowymi: `testLogin` / `testPassword`  
-- ✅ Inteligentne wykrywanie pól (działa z niestandardowymi nazwami)  
-- ✅ Interfejs popup z opisem wtyczki  
-- ✅ Przygotowanie pod przyszły panel zarządzania hasłami
+## Funkcjonalności
+- ✓ Automatyczne wykrywanie pól formularzy (login/hasło)  
+- ✓ Przyciski "🔐 AutoFill" nad wykrytymi formularzami  
+- ✓ Wypełnianie danymi testowymi: `testLogin` / `testPassword`  
+- ✓ Inteligentne wykrywanie pól (działa z niestandardowymi nazwami)  
+- ✓ Interfejs popup z opisem wtyczki  
+- ✓ Przygotowanie pod przyszły panel zarządzania hasłami
 
 ---
 
-## 🛠️ Instalacja dla programistów
+## Instalacja dla programistów
 
 Wymagania:
 - Node.js (>= 14)
@@ -45,7 +45,7 @@ Weryfikacja:
 
 ---
 
-## 🧪 Testowanie
+## Testowanie
 
 Przykładowe strony:
 - https://example.com
@@ -61,7 +61,7 @@ Jak używać:
 
 ---
 
-## 🏗️ Struktura projektu
+## Struktura projektu
 ```
 autofill-login-ts/
 ├── src/
@@ -82,7 +82,7 @@ autofill-login-ts/
 
 ---
 
-## 🔧 Development
+## Development
 
 Dostępne komendy npm:
 - `npm run build` — kompilacja projektu
@@ -95,7 +95,7 @@ Aktualizacja:
 
 ---
 
-## 🎯 Dane testowe
+## Dane testowe
 - Login: `testLogin`  
 - Hasło: `testPassword`
 
@@ -103,23 +103,14 @@ Dane są używane tylko w celach testowych i wypełniane na stronach po kliknię
 
 ---
 
-## 🚀 Planowane funkcje
-- Szyfrowana baza danych haseł  
-- Webowy interfejs do zarządzania hasłami  
-- Import/export danych  
-- Generator silnych haseł  
-- Synchronizacja między urządzeniami
-
----
-
-## 📝 Uwagi
+## Uwagi
 - Rozszerzenie jest w fazie rozwojowej.  
 - Obecnie używane są wyłącznie dane testowe.  
 - Docelowo zostanie rozszerzone o pełen menedżer haseł.
 
 ---
 
-## 🤝 Rozwiązywanie problemów
+## Rozwiązywanie problemów
 Jeśli wtyczka nie działa:
 - Sprawdź konsolę (F12 → Console).  
 - Sprawdź czy folder `dist` zawiera kompletne pliki.  
@@ -128,7 +119,3 @@ Jeśli wtyczka nie działa:
 Jeśli przycisk "AutoFill" nie pojawia się:
 - Upewnij się, że strona ma formularz z polami login i hasło.  
 - Sprawdź atrybuty pól (`name`, `id`, `type`).
-
---- 
-
-(Plik README przygotowany do umieszczenia w `/D:/programy/addon/autofill-login-ts/README.md`)
