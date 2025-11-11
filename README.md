@@ -49,8 +49,8 @@ Weryfikacja:
 
 Przykładowe strony:
 - https://account.booking.com/sign-in
-- https://www.twitch.tv/
-- https://www.w3schools.com/
+- https://www.twitch.tv/ (przycisk "zaloguj się" w prawym górnym rogu)
+- https://practicetestautomation.com/practice-test-login/
 - dowolna strona z formularzem logowania
 
 Jak używać:
