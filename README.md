@@ -48,9 +48,9 @@ Weryfikacja:
 ## Testowanie
 
 Przykładowe strony:
-- https://example.com
-- https://httpbin.org/forms/post
-- https://www.w3schools.com/html/html_forms.asp
+- https://account.booking.com/sign-in
+- https://www.twitch.tv/
+- https://www.w3schools.com/
 - dowolna strona z formularzem logowania
 
 Jak używać:
