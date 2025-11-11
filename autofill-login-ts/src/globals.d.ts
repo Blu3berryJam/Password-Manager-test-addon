@@ -1,1 +1,2 @@
-declare const chrome: typeof import("chrome-types");
+// src/globals.d.ts
+declare const chrome: any;

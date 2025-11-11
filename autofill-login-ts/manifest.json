@@ -1,11 +1,12 @@
 {
   "manifest_version": 3,
-  "name": "Password Autofill",
-  "version": "0.1.0",
-  "description": "Autouzupełnianie formularzy login/hasło",
+  "name": "Truly Yours... Password Manager",
+  "version": "0.2.0",
+  "description": "Secure password manager with autofill functionality",
   "permissions": [
     "activeTab",
-    "storage"
+    "storage",
+    "tabs"
   ],
   "background": {
     "service_worker": "background.js"
@@ -18,8 +19,8 @@
     }
   ],
   "action": {
-    "default_popup": "popup/popup.html",
-    "default_title": "Password Autofill"
+    "default_popup": "popup/popup.html", 
+    "default_title": "Truly Yours Password Manager"
   },
   "icons": {
     "16": "icons/icon16.png",

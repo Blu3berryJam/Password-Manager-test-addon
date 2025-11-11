@@ -1,4 +1,4 @@
-console.log('🔐 Password Autofill content script LOADED!');
+console.log('Truly Yours Password Manager content script loaded');
 
 interface FormField {
   element: HTMLInputElement;
@@ -7,7 +7,7 @@ interface FormField {
 
 class FormDetector {
   constructor() {
-    console.log('🔐 FormDetector initialized');
+    console.log('FormDetector initialized');
     this.observeForms();
   }
 
@@ -57,15 +57,18 @@ class FormDetector {
   }
 
   private processContainer(container: Element, index: number) {
-    console.log(`🔐 Processing container ${index}:`, container);
+    console.log('Processing container:', container);
 
     const inputs = Array.from(container.querySelectorAll('input')) as HTMLInputElement[];
     const fields = this.findFieldsFromInputs(inputs);
     
-    console.log(`🔐 Found fields:`, fields);
+    console.log('Found fields:', fields);
 
     if (fields.username && fields.password) {
       this.addAutofillButton(fields, container, index);
+      
+      // Auto-uzupełnianie jeśli włączone
+      this.attemptAutoFill(fields);
     }
   }
 
@@ -135,10 +138,10 @@ class FormDetector {
 
     const button = document.createElement('button');
     button.type = 'button';
-    button.innerHTML = '🔐 AutoFill';
+    button.innerHTML = '🔒 AutoFill';
     button.className = 'autofill-button';
     button.style.cssText = `
-      background: #4285f4;
+      background: #2c3e50;
       color: white;
       border: none;
       padding: 8px 12px;
@@ -148,6 +151,7 @@ class FormDetector {
       margin: 10px 0;
       font-family: inherit;
       display: block;
+      border: 1px solid #34495e;
     `;
 
     button.addEventListener('click', () => {
@@ -155,7 +159,20 @@ class FormDetector {
     });
 
     container.parentNode?.insertBefore(button, container);
-    console.log('🔐 AutoFill button added!');
+    console.log('AutoFill button added');
+  }
+
+  private async attemptAutoFill(fields: { username?: HTMLInputElement; password?: HTMLInputElement }) {
+    // Sprawdź czy auto-uzupełnianie jest włączone
+    const result = await chrome.storage.local.get(['autoFillEnabled']);
+    const autoFillEnabled = result.autoFillEnabled !== false; // domyślnie true
+    
+    console.log('Auto-fill enabled:', autoFillEnabled);
+    
+    if (autoFillEnabled) {
+      console.log('Auto-filling form');
+      this.fillCredentials(fields);
+    }
   }
 
   private async fillCredentials(fields: { username?: HTMLInputElement; password?: HTMLInputElement }) {
@@ -168,14 +185,14 @@ class FormDetector {
       fields.username.value = cred.username;
       fields.username.dispatchEvent(new Event('input', { bubbles: true }));
       fields.username.dispatchEvent(new Event('change', { bubbles: true }));
-      console.log('🔐 Filled username:', fields.username);
+      console.log('Filled username:', fields.username);
     }
     
     if (fields.password) {
       fields.password.value = cred.password;
       fields.password.dispatchEvent(new Event('input', { bubbles: true }));
       fields.password.dispatchEvent(new Event('change', { bubbles: true }));
-      console.log('🔐 Filled password:', fields.password);
+      console.log('Filled password:', fields.password);
     }
 
     this.showSuccessMessage(fields);
@@ -183,18 +200,19 @@ class FormDetector {
 
   private showSuccessMessage(fields: { username?: HTMLInputElement; password?: HTMLInputElement }) {
     const message = document.createElement('div');
-    message.textContent = '✓ Dane wypełnione!';
+    message.textContent = 'Credentials filled';
     message.style.cssText = `
       position: fixed;
       top: 20px;
       right: 20px;
-      background: #4CAF50;
+      background: #27ae60;
       color: white;
       padding: 10px 15px;
       border-radius: 4px;
       z-index: 10000;
       font-size: 14px;
       box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+      border: 1px solid #219652;
     `;
 
     document.body.appendChild(message);

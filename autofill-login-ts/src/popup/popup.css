@@ -3,7 +3,8 @@ body {
   margin: 0;
   padding: 0;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: #f8f9fa;
+  background: #ffffff;
+  color: #1b2229;
 }
 
 .popup-container {
@@ -11,10 +12,11 @@ body {
 }
 
 .header {
-  background: #4285f4;
+  background: #1b2229;
   color: white;
   padding: 16px;
   text-align: center;
+  border-bottom: 1px solid #1b2229;
 }
 
 .header h3 {
@@ -26,7 +28,7 @@ body {
 .section {
   margin: 0;
   padding: 16px;
-  border-bottom: 1px solid #e9ecef;
+  border-bottom: 1px solid #ecf0f1;
   background: white;
 }
 
@@ -38,17 +40,18 @@ body {
   margin: 0;
   font-size: 13px;
   line-height: 1.5;
-  color: #495057;
+  color: #1b2229;
 }
 
 .description strong {
-  color: #4285f4;
+  color: #1b2229;
+  font-weight: 600;
 }
 
 h4 {
   margin: 0 0 12px 0;
   font-size: 14px;
-  color: #212529;
+  color: #1b2229;
   font-weight: 600;
 }
 
@@ -62,27 +65,28 @@ h4 {
   margin-bottom: 8px;
   background: #f8f9fa;
   border-radius: 6px;
-  border-left: 4px solid #4285f4;
+  border-left: 4px solid #1b2229;
+  border: 1px solid #e9ecef;
 }
 
 .credential-website {
   font-weight: bold;
   font-size: 12px;
-  color: #4285f4;
+  color: #2c3e50;
   margin-bottom: 4px;
 }
 
 .credential-username,
 .credential-password {
   font-size: 11px;
-  color: #666;
+  color: #5a6c7d;
   margin: 2px 0;
 }
 
 .manage-button {
   width: 100%;
   padding: 12px;
-  background: #34a853;
+  background: #2c3e50;
   color: white;
   border: none;
   border-radius: 6px;
@@ -90,10 +94,11 @@ h4 {
   font-size: 13px;
   font-weight: 500;
   transition: background-color 0.2s;
+  border: 1px solid #1b2229;
 }
 
 .manage-button:hover {
-  background: #2d9349;
+  background: #34495e;
 }
 
 /* Switch toggle */
@@ -102,6 +107,7 @@ h4 {
   align-items: center;
   cursor: pointer;
   font-size: 13px;
+  color: #1b2229;
 }
 
 .switch input {
@@ -112,10 +118,11 @@ h4 {
   position: relative;
   width: 40px;
   height: 20px;
-  background-color: #ccc;
+  background-color: #bdc3c7;
   border-radius: 20px;
   margin-right: 8px;
   transition: .3s;
+  border: 1px solid #95a5a6;
 }
 
 .slider:before {
@@ -131,7 +138,8 @@ h4 {
 }
 
 input:checked + .slider {
-  background-color: #4285f4;
+  background-color: #48525c;
+  border-color: #19232c;
 }
 
 input:checked + .slider:before {
@@ -140,8 +148,9 @@ input:checked + .slider:before {
 
 .info {
   text-align: center;
-  color: #6c757d;
+  color: #7f8c8d;
   font-size: 11px;
   padding: 12px;
   background: #f8f9fa;
+  border-top: 1px solid #ecf0f1;
 }

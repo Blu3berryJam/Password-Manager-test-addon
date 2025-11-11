@@ -1,7 +1,7 @@
 {
-  "name": "password-autofill-extension",
-  "version": "1.0.0",
-  "description": "Autouzupełnianie formularzy login/hasło",
+  "name": "truly-yours-password-manager",
+  "version": "0.2.0",
+  "description": "Secure password manager with autofill functionality",
   "scripts": {
     "build": "webpack",
     "dev": "webpack --watch"
