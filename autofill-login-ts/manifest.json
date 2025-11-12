@@ -3,6 +3,7 @@
   "name": "Truly Yours... Password Manager",
   "version": "0.2.0",
   "description": "Secure password manager with autofill functionality",
+  "description": "Secure password management with intelligent autofill",
   "permissions": [
     "activeTab",
     "storage",
@@ -23,7 +24,7 @@
     }
   ],
   "action": {
-    "default_popup": "popup/popup.html", 
+    "default_popup": "popup/popup.html",
     "default_title": "Truly Yours Password Manager"
   },
   "icons": {

@@ -1,0 +1,22 @@
+{
+  "features": [
+    "Auto-fill forms with test credentials",
+    "Smart form detection for various field names",
+    "Web interface integration ready",
+    "Sttings persistence eacross browser sessions",
+    "Modern white-gray-black color scheme",
+    "Complete English localization"
+  ],
+  "whatsNew": [
+    "Complete English localization throughout the extension",
+    "Updated UI with modern white-gray-black color scheme",
+    "Fixed auto-fill toggle functionality with proper persistence",
+    "Improved form detection algorithm for better compatibility",
+    "Enhanced popup interface with consistent styling",
+    "Web interface integration prepared for localhost:3000"
+  ],
+  "systemRequirements": [
+    "Google Chrome 88+ or Chromium-based browser",
+    "Node.js (for development and building only)"
+  ]
+}

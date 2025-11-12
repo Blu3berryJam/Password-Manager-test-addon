@@ -23,4 +23,4 @@ manifest.description = versionConfig.description;
 
 fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2));
 
-console.log(`Updated version to ${versionConfig.version} in all files`);
+console.log(`✅ Updated version to ${versionConfig.version} in all files`);

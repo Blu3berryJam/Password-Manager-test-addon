@@ -1,10 +1,12 @@
 {
   "name": "truly-yours-password-manager",
   "version": "0.2.0",
-  "description": "Secure password manager with autofill functionality",
+  "description": "Secure password management with intelligent autofill",
   "scripts": {
     "build": "webpack",
-    "dev": "webpack --watch"
+    "dev": "webpack --watch",
+    "release": "npm run uv && node scripts/build-release.js",
+    "uv": "node scripts/update-version.js"
   },
   "devDependencies": {
     "@types/chrome": "^0.0.246",

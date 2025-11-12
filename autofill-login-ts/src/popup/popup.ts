@@ -5,14 +5,14 @@ interface StoredCredential {
   password: string;
   createdAt: Date;
 }
+let webInterfaceOpened = false;
 
-// Get version from manifest
 async function getVersion() {
   try {
     const manifest = chrome.runtime.getManifest();
     return manifest.version;
   } catch (error) {
-    return '0.2.0'; // fallback
+    return '0.2.0'; 
   }
 }
 
@@ -103,15 +103,27 @@ function setupAutoFillToggle() {
 
 function setupWebInterfaceButton() {
   const manageButton = document.getElementById('manage-passwords') as HTMLButtonElement;
-  console.log('Setting up web interface button:', manageButton);
-  
   if (manageButton) {
-    manageButton.addEventListener('click', () => {
-      console.log('Web interface clicked');
-      // Otwórz localhost:3000 w nowej karcie
+    // Use event delegation with once option
+    manageButton.addEventListener('click', function handleClick() {
+      if (webInterfaceOpened) {
+        console.log('Web interface already opened, ignoring click');
+        return;
+      }
+
+      webInterfaceOpened = true;
+      console.log('Opening web interface...');
+      
       chrome.tabs.create({ url: 'http://localhost:3000' });
+      
+      // Remove the event listener after first click
+      manageButton.removeEventListener('click', handleClick);
+      
+      // Re-enable after 2 seconds
+      setTimeout(() => {
+        webInterfaceOpened = false;
+        manageButton.addEventListener('click', handleClick);
+      }, 2000);
     });
-  } else {
-    console.error('Web interface button element not found!');
   }
 }

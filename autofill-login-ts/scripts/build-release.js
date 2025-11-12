@@ -2,7 +2,10 @@ const fs = require('fs');
 const { execSync } = require('child_process');
 const path = require('path');
 
+// Read version from central config
 const versionConfig = JSON.parse(fs.readFileSync('version.json', 'utf8'));
+const releaseNotes = JSON.parse(fs.readFileSync('release-notes.json', 'utf8'));
+
 const version = versionConfig.version;
 const appName = versionConfig.name;
 const description = versionConfig.description;
@@ -68,10 +71,7 @@ const installationInstructions = `# Installation Instructions
 6. Chrome will automatically extract and install the extension
 
 ## Features Included:
-- Auto-fill forms with test credentials
-- Smart form detection
-- Web interface integration
-- Settings persistence
+${releaseNotes.features.map(feature => `- ${feature}`).join('\n')}
 
 **Application:** ${appName}
 **Version:** ${version} Alpha
@@ -81,18 +81,13 @@ const installationInstructions = `# Installation Instructions
 fs.writeFileSync(path.join('release', 'INSTALLATION.md'), installationInstructions);
 
 // Create release notes
-const releaseNotes = `# ${appName} v${version}
+const releaseNotesContent = `# ${appName} v${version}
 
 ## What's New
-- Complete English localization
-- Modern UI with white-gray-black color scheme
-- Fixed auto-fill toggle functionality
-- Improved form detection
-- Web interface integration ready
+${releaseNotes.whatsNew.map(item => `- ${item}`).join('\n')}
 
 ## System Requirements
-- Google Chrome 88+ or Chromium-based browser
-- Node.js (for development only)
+${releaseNotes.systemRequirements.map(req => `- ${req}`).join('\n')}
 
 ## Quick Start
 1. Install the extension using the instructions in \`INSTALLATION.md\`
@@ -108,7 +103,7 @@ const releaseNotes = `# ${appName} v${version}
 For issues and feature requests, please contact the development team.
 `;
 
-fs.writeFileSync(path.join('release', 'README-RELEASE.md'), releaseNotes);
+fs.writeFileSync(path.join('release', 'README-RELEASE.md'), releaseNotesContent);
 
 // Create ZIP file
 console.log('Creating ZIP archive...');
@@ -121,5 +116,5 @@ try {
   execSync(`powershell -Command "Compress-Archive -Path 'release\\v${version}\\*','release\\INSTALLATION.md','release\\README-RELEASE.md' -DestinationPath 'release\\${zipFileName}' -Force"`, { stdio: 'inherit' });
 }
 
-console.log(`✅ ${appName} v${version} release created successfully!`);
-console.log(`📦 ZIP file: release/${zipFileName}`);
+console.log(`${appName} v${version} release created successfully!`);
+console.log(`ZIP file: release/${zipFileName}`);
