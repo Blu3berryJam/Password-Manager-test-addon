@@ -2,7 +2,7 @@
 
 Rozszerzenie dla przeglądarek opartych na Chromium do automatycznego wypełniania formularzy logowania danymi testowymi.
 
-Wersja: 0.1.2 (Alpha)
+Wersja: 0.2.0 (Alpha)
 
 ## Funkcjonalności
 - ✓ Automatyczne wykrywanie pól formularzy (login/hasło)  
