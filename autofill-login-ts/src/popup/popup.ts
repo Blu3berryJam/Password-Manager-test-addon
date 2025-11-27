@@ -29,14 +29,26 @@ document.addEventListener('DOMContentLoaded', async () => {
   setupAutoFillToggle();
   setupWebInterfaceButton();
 
-  document.getElementById("pick")!.addEventListener("click", async () => {
-    const [fileHandle] = await (window as any).showOpenFilePicker?.() || [];
-    if (!fileHandle) return;
-    const file = await fileHandle.getFile();
+  document.getElementById("pick")!.addEventListener("click", () => {
+    // 1. Pobieramy ukryty input
+    const fileInput = document.getElementById('file-input') as HTMLInputElement;
+    if (fileInput) {
+      // 2. Programowo klikamy na input
+      fileInput.click();
+    }
+  });
+
+  // Dodaj nowy listener dla zmiany w ukrytym input
+  document.getElementById('file-input')!.addEventListener('change', async (event) => {
+    const target = event.target as HTMLInputElement;
+    const file = target.files?.[0]; // Pobieramy wybrany plik
+    
+    if (!file) return;
+
     const data = await file.arrayBuffer();
     const key = new Uint8Array(data);
 
-    // Wyślij master key do background
+    // Wyślij master key do background (Twoja oryginalna logika)
     const response = await chrome.runtime.sendMessage({ action: 'unlock', key });
     if (response.ok) {
       console.log('Key loaded!');
@@ -44,6 +56,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     } else {
       alert('Failed to unlock key');
     }
+
+    // Opcjonalnie: resetuj input, aby umożliwić ponowne załadowanie tego samego pliku
+    target.value = '';
   });
 });
 
