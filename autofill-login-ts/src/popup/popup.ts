@@ -28,6 +28,23 @@ document.addEventListener('DOMContentLoaded', async () => {
   await loadCredentials();
   setupAutoFillToggle();
   setupWebInterfaceButton();
+
+  document.getElementById("pick")!.addEventListener("click", async () => {
+    const [fileHandle] = await (window as any).showOpenFilePicker?.() || [];
+    if (!fileHandle) return;
+    const file = await fileHandle.getFile();
+    const data = await file.arrayBuffer();
+    const key = new Uint8Array(data);
+
+    // Wyślij master key do background
+    const response = await chrome.runtime.sendMessage({ action: 'unlock', key });
+    if (response.ok) {
+      console.log('Key loaded!');
+      await loadCredentials();
+    } else {
+      alert('Failed to unlock key');
+    }
+  });
 });
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -126,4 +143,25 @@ function setupWebInterfaceButton() {
       }, 2000);
     });
   }
+}
+
+async function handleFilePick() {
+  const [fileHandle] = await (window as any).showOpenFilePicker?.() || [];
+  if (!fileHandle) return;
+
+  const file = await fileHandle.getFile();
+  console.log(file)
+  const arrayBuffer = await file.arrayBuffer();
+  console.log(arrayBuffer)
+
+  if (arrayBuffer.byteLength !== 32) {
+    alert("Master key must be 32 bytes (AES-256)");
+    return;
+}
+  const uint8Key = new Uint8Array(arrayBuffer);
+  console.log(uint8Key)
+  chrome.runtime.sendMessage({
+    action: "unlock",
+    key: Array.from(uint8Key) 
+  });
 }
