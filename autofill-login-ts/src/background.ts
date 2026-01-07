@@ -34,8 +34,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         sendResponse({ ok: false, error: 'decrypt_failed' });
       }
       return;
-    }
-    if 
+    } 
 
     if (request.action === 'saveCredentials') {
       console.log('Saving credentials for website:', request.website);
