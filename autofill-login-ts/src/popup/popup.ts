@@ -66,6 +66,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   console.log('Popup loaded');
   await loadCredentials();
   setupAutoFillToggle();
+  setupCreateKeyButton();
   setupWebInterfaceButton();
 });
 
@@ -132,7 +133,9 @@ function setupAutoFillToggle() {
     console.error('Toggle element not found!');
   }
 }
-
+function setupCreateKeyButton() {
+  const manageButton = document.getElementById('generate-key') as HTMLButtonElement;
+}
 function setupWebInterfaceButton() {
   const manageButton = document.getElementById('manage-passwords') as HTMLButtonElement;
   if (manageButton) {

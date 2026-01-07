@@ -1,4 +1,5 @@
 import { decryptAESGCM, encryptAESGCM } from './cryptoHelper'
+import {generateAndDownloadKey} from './create-master-key'
 
 let masterKeyRaw: Uint8Array | null = null; 
 let masterCryptoKey: CryptoKey | null = null;
@@ -22,59 +23,116 @@ function getTestCredentials() {
 
 // Obsługa wiadomości z content script i popup
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  console.log('Background received message:', request);
-  
-  // Ładowanie danych
-  if (request.action === 'getCredentials') {
-    if (!masterCryptoKey) return sendResponse({ ok: false, error: 'locked' });
-    decypherCredentials().then((credentials) => {
-      console.log('Sending credentials:', credentials);
-      sendResponse({ credentials });
-    }).catch(err => {
-      console.error(err);
-      sendResponse({ ok: false, error: 'decrypt_failed' });
-    });
-    return true;
-  }
-
-  // Ustawianie master key'a
- if (request.action === 'unlock') {
-    const keyArray = new Uint8Array(Object.values(request.key) as number[]);
-
-    if (keyArray.byteLength !== 32) {
-      console.error("❌ Invalid key length:", keyArray.byteLength);
-      return sendResponse({ ok: false, error: "invalid_key_length" });
+  (async () => {
+    if (request.action === 'getCredentials') {
+      try {
+        const credentials = await decypherCredentials();
+        console.log('Sending credentials:', credentials);
+        sendResponse({ credentials });
+      } catch (err) {
+        console.error(err);
+        sendResponse({ ok: false, error: 'decrypt_failed' });
+      }
+      return;
     }
-    crypto.subtle.importKey(
-      "raw",
-      keyArray.buffer,
-      { name: "AES-GCM" },
-      false,
-      ["encrypt", "decrypt"]
-    ).then(k => {
-      masterCryptoKey = k;
-      console.log("🔑 Master key loaded!");
-      sendResponse({ ok: true });
-    }).catch(err => {
-      console.error("Failed to import key:", err);
-      sendResponse({ ok: false, error: "import_failed" });
-    });
+    if 
 
-    return true; 
-  }
+    if (request.action === 'saveCredentials') {
+      console.log('Saving credentials for website:', request.website);
+      console.log('Username:', request.username);
+      console.log('Password:', request.password);
+      // TODO: Tutaj zaimplementuj szyfrowanie i wysyłanie danych do backendu
+      sendResponse({ ok: true, message: 'Credentials received by background script.' });
+      return;
+    }
+
+    if (request.action === 'unlock') {
+      try {
+        const keyArray = new Uint8Array(Object.values(request.key) as number[]);
+        if (keyArray.byteLength !== 32) {
+          console.error("❌ Invalid key length:", keyArray.byteLength);
+          sendResponse({ ok: false, error: "invalid_key_length" });
+          return;
+        }
+        const k = await crypto.subtle.importKey(
+          "raw",
+          keyArray.buffer,
+          { name: "AES-GCM" },
+          false,
+          ["encrypt", "decrypt"]
+        );
+        masterCryptoKey = k;
+        console.log("🔑 Master key loaded!");
+        sendResponse({ ok: true });
+      } catch (err) {
+        console.error("Failed to import key:", err);
+        sendResponse({ ok: false, error: "import_failed" });
+      }
+      return;
+    }
+
+    if (request.action === 'promptToSaveCredentials') {
+      const url = chrome.runtime.getURL('save-prompt/save-prompt.html');
+      const queryParams = new URLSearchParams({
+        username: request.username,
+        password: request.password,
+        website: request.website
+      });
+      await chrome.windows.create({
+        url: `${url}?${queryParams.toString()}`,
+        type: 'popup',
+        width: 350,
+        height: 180,
+      });
+      // No sendResponse needed here
+    }
+  })();
+
+  return true; // Zwracamy true, aby zasygnalizować asynchroniczną odpowiedź
 });
 
+async function fetchEntries(hostname: string) {
+  const url = `http://127.0.0.1:5001/api/entries/${hostname}`;
+  
+  try {
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    });
+
+    if (!response.ok) {
+      console.error(`Błąd API: ${response.status} ${response.statusText} - ${url }`);
+      throw new Error(`Failed to fetch credentials: ${response.status}`);
+    }
+
+    const encryptedEntries = await response.json();
+    console.log('Pobrano zaszyfrowane wpisy z API:', encryptedEntries);
+    return encryptedEntries;
+    
+  } catch (error) {
+    console.error('Błąd sieci podczas pobierania danych:', error);
+    return []; 
+  }
+}
 
 async function decypherCredentials() {
-  if (!masterCryptoKey) throw new Error('Master key not loaded');
+  //if (!masterCryptoKey) throw new Error('Master key not loaded');
 
-  // Odszyfrowanie danych
-  const stored = await encryptExampleCredentials(); 
-  const { iv, ciphertext } = stored;
-  const plaintext = await decryptAESGCM(masterCryptoKey, iv, ciphertext);
-  const cred = JSON.parse(plaintext);
+  const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
+  const activeTab = tabs[0];
+
+  if (activeTab?.url) {
+    const url = new URL(activeTab.url);
+    const currentDomain = url.hostname;
+    console.log('Aktualna domena:', currentDomain);
+    
+    const credentials = await fetchEntries(currentDomain);
+    return credentials;
+  }
   
-  return cred;
+  return [];
 }
 
 // szyfrowanie próbne; potem wtyczka musi dostawać zaszyfrowane dane, ale

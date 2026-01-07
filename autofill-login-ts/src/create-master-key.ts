@@ -1,8 +1,5 @@
-/**
- * Generuje 256-bitowy klucz (32 bajty) i wymusza pobranie go
- * jako pliku 'master.key' za pomocą tymczasowego linku.
- */
-function generateAndDownloadKey() {
+
+async function generateAndDownloadKey() {
   // 1. Generowanie klucza (32 bajty)
   // Używamy kryptograficznie bezpiecznej funkcji.
   const keyLength = 32; 
@@ -35,5 +32,4 @@ function generateAndDownloadKey() {
   console.log("✅ master.key został wygenerowany i rozpoczyna się pobieranie.");
 }
 
-// Uruchomienie funkcji
-generateAndDownloadKey();
+export {generateAndDownloadKey};

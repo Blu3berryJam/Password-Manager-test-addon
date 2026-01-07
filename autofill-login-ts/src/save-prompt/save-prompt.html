@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Save Credentials</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f0f2f5;
+      width: 300px;
+      text-align: center;
+    }
+    p {
+      font-size: 14px;
+      color: #333;
+      margin-bottom: 20px;
+    }
+    .website {
+      font-weight: bold;
+      color: #000;
+    }
+    .buttons {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+    }
+    button {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      transition: background-color 0.2s ease;
+    }
+    #save-yes {
+      background-color: #28a745;
+      color: white;
+    }
+    #save-yes:hover {
+      background-color: #218838;
+    }
+    #save-no {
+      background-color: #dc3545;
+      color: white;
+    }
+    #save-no:hover {
+      background-color: #c82333;
+    }
+  </style>
+</head>
+<body>
+  <p>Do you want to save the password for <span id="website-placeholder" class="website">this site</span>?</p>
+  <div class="buttons">
+    <button id="save-yes">Yes, Save</button>
+    <button id="save-no">No</button>
+  </div>
+  <script src="save-prompt.js"></script>
+</body>
+</html>
