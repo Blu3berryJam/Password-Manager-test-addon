@@ -28,4 +28,8 @@ function b64ToBuf(b64: string) {
   return Uint8Array.from(atob(b64), c => c.charCodeAt(0)).buffer;
 }
 
+//dodaj batch decypher
+// decrypt(credentials(arr: List[{username, password, website}]))
+// pojedynczy decypher
+
 export { importRawKey, encryptAESGCM, decryptAESGCM, bufToB64, b64ToBuf };

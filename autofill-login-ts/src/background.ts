@@ -1,4 +1,4 @@
-import { decryptAESGCM, encryptAESGCM } from './cryptoHelper'
+import { encryptAESGCM, decypher_first_from_json, encrypt_data} from 'crypto-module';
 import {generateAndDownloadKey} from './create-master-key'
 
 let masterKeyRaw: Uint8Array | null = null; 
@@ -37,10 +37,54 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     } 
 
     if (request.action === 'saveCredentials') {
-      console.log('Saving credentials for website:', request.website);
-      console.log('Username:', request.username);
-      console.log('Password:', request.password);
-      // TODO: Tutaj zaimplementuj szyfrowanie i wysyłanie danych do backendu
+// ========== zaimplementowane szyfrowanie i wysyłanie danych do backendu ===========
+
+      const { username, password, website } = request.data;
+
+      console.log('Saving credentials for website:', website);
+      console.log('Username:', username);
+      console.log('Password:', password);
+
+// ====================== Szyforwanie ==========================
+
+      if (!masterCryptoKey) {
+        console.error("Master key not loaded!");
+        sendResponse({ ok: false, error: 'locked' });
+        return;
+      }
+
+      const encrypted = await encrypt_data(
+        { username, password, website },
+        masterCryptoKey
+      );
+
+// ===================== Wysyłanie na backend =================
+      try {
+        const apiResponse = await fetch('http://127.0.0.1:5001/api/entries', {
+          method: 'POST',
+          headers: {
+                'Content-Type': 'application/json',
+                // Jeśli serwer wymaga autoryzacji (np. token API), dodaj go tutaj
+            },
+          body: JSON.stringify(encrypted)
+        });
+
+        if (!apiResponse.ok) {
+          console.error(`Błąd podczas wysyłania danych do API: ${apiResponse.status} ${apiResponse.statusText}`);
+          sendResponse({ ok: false, error: 'api_error' });
+          return;
+        }
+
+      console.log("Dane pomyślnie wysłane do zewnętrznego API.");
+
+      } catch (err) {
+        console.error("Błąd sieci/fetch (API nieodpowiedzialne):", err);
+        //window.close();
+        sendResponse({ ok: false, error: 'Błąd sieci' });
+      }
+
+// =================== Tutaj powyżej wrzuciłam kod z save-prompt ==================
+
       sendResponse({ ok: true, message: 'Credentials received by background script.' });
       return;
     }
@@ -128,8 +172,15 @@ async function decypherCredentials() {
     console.log('Aktualna domena:', currentDomain);
     
     const credentials = await fetchEntries(currentDomain);
-    return credentials;
-  }
+
+    if (!credentials || credentials.length === 0) {
+      console.error('Brak zapisanych danych dla domeny: ${currentDomain}');
+      return [];
+    }
+
+    const decyphered_data = decypher_first_from_json(credentials, masterCryptoKey)
+      return decyphered_data;
+      }
   
   return [];
 }
