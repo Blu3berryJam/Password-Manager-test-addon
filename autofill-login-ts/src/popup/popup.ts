@@ -68,6 +68,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   setupAutoFillToggle();
   setupCreateKeyButton();
   setupWebInterfaceButton();
+  setupCreateKeyButton(); 
 });
 
 async function loadCredentials() {
@@ -133,8 +134,42 @@ function setupAutoFillToggle() {
     console.error('Toggle element not found!');
   }
 }
+async function generateAndDownloadKey() {
+  // Generowanie 32 losowych bajtów (bezpieczny master key)
+  const keyLength = 32; 
+  const key = crypto.getRandomValues(new Uint8Array(keyLength)); 
+  
+  // Tworzenie Bloba (surowe dane binarne)
+  const blob = new Blob([key], { type: "application/octet-stream" });
+  
+  // Tworzenie tymczasowego adresu URL do pliku w pamięci przeglądarki
+  const url = URL.createObjectURL(blob);
+  
+  // Tworzenie ukrytego elementu <a> do wywołania pobierania
+  const downloadLink = document.createElement('a');
+  downloadLink.href = url;
+  downloadLink.download = "master.key"; // Nazwa pliku, który otrzyma użytkownik
+  
+  // Wymuszenie pobrania
+  document.body.appendChild(downloadLink);
+  downloadLink.click();
+  document.body.removeChild(downloadLink);
+  
+  // Zwolnienie pamięci
+  URL.revokeObjectURL(url);
+
+  console.log("✅ master.key został wygenerowany i pobrany.");
+}
+
+// 2. Twoja funkcja ustawiająca przycisk (rozszerzona)
 function setupCreateKeyButton() {
   const manageButton = document.getElementById('generate-key') as HTMLButtonElement;
+  
+  if (manageButton) {
+    manageButton.addEventListener('click', async () => {
+      await generateAndDownloadKey();
+    });
+  }
 }
 function setupWebInterfaceButton() {
   const manageButton = document.getElementById('manage-passwords') as HTMLButtonElement;
