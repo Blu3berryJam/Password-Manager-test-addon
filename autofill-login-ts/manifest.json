@@ -2,12 +2,14 @@
   "manifest_version": 3,
   "name": "Truly Yours... Password Manager",
   "version": "0.2.0",
+  "key": "PasswordManagerExtension2147",
   "description": "Secure password manager with autofill functionality",
-  "description": "Secure password management with intelligent autofill",
   "permissions": [
     "activeTab",
     "storage",
-    "tabs"
+    "downloads",
+    "tabs",
+    "http://127.0.0.1:5001/"
   ],
   "background": {
     "service_worker": "background.js"
@@ -31,5 +33,11 @@
     "16": "icons/icon16.png",
     "48": "icons/icon48.png",
     "128": "icons/icon128.png"
-  }
+  },
+  "web_accessible_resources": [
+    {
+      "resources": [ "save-prompt/save-prompt.html", "save-prompt/save-prompt.js" ],
+      "matches": [ "<all_urls>" ]
+    }
+  ]
 }

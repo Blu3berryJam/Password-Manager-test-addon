@@ -6,7 +6,8 @@ module.exports = {
   entry: {
     background: './src/background.ts',
     content: './src/content.ts',
-    'popup/popup': './src/popup/popup.ts'
+    'popup/popup': './src/popup/popup.ts',
+    'save-prompt/save-prompt': './src/save-prompt/save-prompt.ts'
   },
   output: {
     path: path.resolve(__dirname, 'dist'),
@@ -31,6 +32,7 @@ module.exports = {
         { from: 'manifest.json', to: 'manifest.json' },
         { from: 'src/popup/popup.html', to: 'popup/popup.html' },
         { from: 'src/popup/popup.css', to: 'popup/popup.css' },
+        { from: 'src/save-prompt/save-prompt.html', to: 'save-prompt/save-prompt.html' },
         { from: 'icons', to: 'icons', noErrorOnMissing: true }
       ],
     }),

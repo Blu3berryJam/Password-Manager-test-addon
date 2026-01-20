@@ -69,7 +69,56 @@ class FormDetector {
       
       // Auto-uzupełnianie jeśli włączone
       this.attemptAutoFill(fields);
+
+      // Nasłuchuj na próbę zapisu danych
+      this.listenForSubmission(container, fields);
     }
+  }
+
+  private listenForSubmission(container: Element, fields: { username?: HTMLInputElement; password?: HTMLInputElement }) {
+    let submissionDetected = false;
+
+    const handleSubmit = () => {
+      if (submissionDetected) return;
+
+      console.log('Submission detected, checking credentials...');
+      const username = fields.username?.value;
+      const password = fields.password?.value;
+
+      if (username && password) {
+        submissionDetected = true;
+        this.promptToSaveCredentials(username, password);
+        // Reset the flag after a short delay to allow for future submissions
+        setTimeout(() => { submissionDetected = false; }, 1000);
+      }
+    };
+
+    // Nasłuchuj na tradycyjne wysłanie formularza
+    const form = container.closest('form');
+    if (form) {
+      form.addEventListener('submit', handleSubmit);
+    }
+
+    // Nasłuchuj na kliknięcia w przyciski, które mogą wysyłać formularz
+    const buttons = container.querySelectorAll('button, input[type="submit"], input[type="button"]');
+    buttons.forEach(button => {
+      // Sprawdź, czy przycisk wygląda na przycisk do logowania
+      const buttonText = (button instanceof HTMLInputElement ? button.value : (button as HTMLElement).innerText || '').toLowerCase();
+      const loginKeywords = ['log in', 'sign in', 'login', 'signin', 'submit', 'zaloguj'];
+      
+      if (loginKeywords.some(keyword => buttonText.includes(keyword))) {
+        button.addEventListener('click', handleSubmit);
+      }
+    });
+  }
+
+  private promptToSaveCredentials(username: string, password: string) {
+    chrome.runtime.sendMessage({
+      action: 'promptToSaveCredentials',
+      username,
+      password,
+      website: window.location.hostname
+    });
   }
 
   private findFieldsFromInputs(inputs: HTMLInputElement[]): { username?: HTMLInputElement; password?: HTMLInputElement } {

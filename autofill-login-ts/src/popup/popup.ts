@@ -28,13 +28,47 @@ document.addEventListener('DOMContentLoaded', async () => {
   await loadCredentials();
   setupAutoFillToggle();
   setupWebInterfaceButton();
+
+  document.getElementById("pick")!.addEventListener("click", () => {
+    // 1. Pobieramy ukryty input
+    const fileInput = document.getElementById('file-input') as HTMLInputElement;
+    if (fileInput) {
+      // 2. Programowo klikamy na input
+      fileInput.click();
+    }
+  });
+
+  // Dodaj nowy listener dla zmiany w ukrytym input
+  document.getElementById('file-input')!.addEventListener('change', async (event) => {
+    const target = event.target as HTMLInputElement;
+    const file = target.files?.[0]; // Pobieramy wybrany plik
+    
+    if (!file) return;
+
+    const data = await file.arrayBuffer();
+    const key = new Uint8Array(data);
+
+    // Wyślij master key do background (Twoja oryginalna logika)
+    const response = await chrome.runtime.sendMessage({ action: 'unlock', key });
+    if (response.ok) {
+      console.log('Key loaded!');
+      await loadCredentials();
+    } else {
+      alert('Failed to unlock key');
+    }
+
+    // Opcjonalnie: resetuj input, aby umożliwić ponowne załadowanie tego samego pliku
+    target.value = '';
+  });
 });
 
 document.addEventListener('DOMContentLoaded', async () => {
   console.log('Popup loaded');
   await loadCredentials();
   setupAutoFillToggle();
+  setupCreateKeyButton();
   setupWebInterfaceButton();
+  setupCreateKeyButton(); 
 });
 
 async function loadCredentials() {
@@ -100,7 +134,43 @@ function setupAutoFillToggle() {
     console.error('Toggle element not found!');
   }
 }
+async function generateAndDownloadKey() {
+  // Generowanie 32 losowych bajtów (bezpieczny master key)
+  const keyLength = 32; 
+  const key = crypto.getRandomValues(new Uint8Array(keyLength)); 
+  
+  // Tworzenie Bloba (surowe dane binarne)
+  const blob = new Blob([key], { type: "application/octet-stream" });
+  
+  // Tworzenie tymczasowego adresu URL do pliku w pamięci przeglądarki
+  const url = URL.createObjectURL(blob);
+  
+  // Tworzenie ukrytego elementu <a> do wywołania pobierania
+  const downloadLink = document.createElement('a');
+  downloadLink.href = url;
+  downloadLink.download = "master.key"; // Nazwa pliku, który otrzyma użytkownik
+  
+  // Wymuszenie pobrania
+  document.body.appendChild(downloadLink);
+  downloadLink.click();
+  document.body.removeChild(downloadLink);
+  
+  // Zwolnienie pamięci
+  URL.revokeObjectURL(url);
 
+  console.log("✅ master.key został wygenerowany i pobrany.");
+}
+
+// 2. Twoja funkcja ustawiająca przycisk (rozszerzona)
+function setupCreateKeyButton() {
+  const manageButton = document.getElementById('generate-key') as HTMLButtonElement;
+  
+  if (manageButton) {
+    manageButton.addEventListener('click', async () => {
+      await generateAndDownloadKey();
+    });
+  }
+}
 function setupWebInterfaceButton() {
   const manageButton = document.getElementById('manage-passwords') as HTMLButtonElement;
   if (manageButton) {
@@ -126,4 +196,25 @@ function setupWebInterfaceButton() {
       }, 2000);
     });
   }
+}
+
+async function handleFilePick() {
+  const [fileHandle] = await (window as any).showOpenFilePicker?.() || [];
+  if (!fileHandle) return;
+
+  const file = await fileHandle.getFile();
+  console.log(file)
+  const arrayBuffer = await file.arrayBuffer();
+  console.log(arrayBuffer)
+
+  if (arrayBuffer.byteLength !== 32) {
+    alert("Master key must be 32 bytes (AES-256)");
+    return;
+}
+  const uint8Key = new Uint8Array(arrayBuffer);
+  console.log(uint8Key)
+  chrome.runtime.sendMessage({
+    action: "unlock",
+    key: Array.from(uint8Key) 
+  });
 }
