@@ -1,5 +1,4 @@
 import { encryptAESGCM, decypher_first_from_json, encrypt_data} from 'crypto-module';
-import {generateAndDownloadKey} from './create-master-key'
 
 let masterKeyRaw: Uint8Array | null = null; 
 let masterCryptoKey: CryptoKey | null = null;
