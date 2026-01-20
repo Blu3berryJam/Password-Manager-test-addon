@@ -7,10 +7,11 @@ Wersja: 0.2.0 (Alpha)
 ## Funkcjonalności
 - ✓ Automatyczne wykrywanie pól formularzy (login/hasło)  
 - ✓ Przyciski "🔐 AutoFill" nad wykrytymi formularzami  
-- ✓ Wypełnianie danymi testowymi: `testLogin` / `testPassword`  
+- ✓ Wypełnianie danymi
+- ✓ Wysyłanie na backend wpisywanych danych
 - ✓ Inteligentne wykrywanie pól (działa z niestandardowymi nazwami)  
 - ✓ Interfejs popup z opisem wtyczki  
-- ✓ Przygotowanie pod przyszły panel zarządzania hasłami
+- ✓ Generacja klucza szyfrującego
 
 ---
 
@@ -32,6 +33,7 @@ npm install
 # skompiluj TypeScript
 npm run build
 ```
+W celu instalacji funkcji kryptograficznych należy skorzystać z [dodatkowego repozytorium](https://github.com/MartynaKaczmarczyk/Password_Manager_Crypto) i postępować z instrukcjami tam zamieszczonymi. Funkcje kryptograficzne będą już umieszczone w pełnym releasie.
 
 Załaduj w Chrome/Chromium:
 1. Otwórz `chrome://extensions/`
