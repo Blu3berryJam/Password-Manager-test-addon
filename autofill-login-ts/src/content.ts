@@ -281,3 +281,21 @@ if (document.readyState === 'loading') {
 } else {
   new FormDetector();
 }
+
+window.addEventListener("message", (event) => {
+  // 1. Sprawdzamy, czy wiadomość pochodzi z naszego Reacta (localhost:3000)
+  if (event.origin !== "http://localhost:3000") return;
+
+  // 2. Sprawdzamy typ wiadomości
+  if (event.data.type !== "GET_MASTER_KEY_REQUEST") return;
+
+  console.log("Bridge: Przekazywanie prośby o Master Key do background...");
+
+  chrome.runtime.sendMessage({ type: "GET_MASTER_KEY" }, (response) => {
+    // Przesyłamy odpowiedź z powrotem do Reacta
+    window.postMessage({ 
+      type: "FROM_CONTENT_SCRIPT", 
+      response 
+    }, "http://localhost:3000"); // Wysyłamy TYLKO do localhosta
+  });
+});
