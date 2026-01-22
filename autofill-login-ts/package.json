@@ -17,6 +17,6 @@
     "webpack-cli": "^5.1.0"
   },
   "dependencies": {
-    "crypto-module": "file:../../crypto/Password_Manager_Crypto"
+    "crypto-module": "file:../../../projekty/Password_Manager_Crypto"
   }
 }

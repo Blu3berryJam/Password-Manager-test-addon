@@ -64,8 +64,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       const { username, password, website } = request.data;
 
       console.log('Saving credentials for website:', website);
-      console.log('Username:', username);
-      console.log('Password:', password);
 
 // ====================== Szyforwanie ==========================
 
@@ -86,7 +84,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
           method: 'POST',
           headers: {
                 'Content-Type': 'application/json',
-                // Jeśli serwer wymaga autoryzacji (np. token API), dodaj go tutaj
             },
           body: JSON.stringify(encrypted)
         });
@@ -113,20 +110,17 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
   if (request.type === "GET_MASTER_KEY") {
     
-    // 1. Najpierw sprawdźmy, czy mamy klucz w pamięci RAM (zmienna masterKeyRaw)
     if (masterKeyRaw) {
-      console.log("Wysyłam klucz ze zmiennej lokalnej (RAM)");
       sendResponse({ success: true, key: Array.from(masterKeyRaw) });
       return false; // synchronizacja: wysyłamy od razu
     }
 
-    // 2. Jeśli nie ma w RAM, spróbujmy pobrać z sesji
+
     chrome.storage.session.get("masterKey").then((data) => {
       if (data.masterKey) {
         console.log("Wysyłam klucz z session storage");
         sendResponse({ success: true, key: data.masterKey });
       } else {
-        console.warn("Vault locked: Brak klucza w RAM i w sesji");
         sendResponse({ success: false, error: "Vault locked" });
       }
     });
@@ -138,7 +132,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       try {
         const keyArray = new Uint8Array(Object.values(request.key) as number[]);
         if (keyArray.byteLength !== 32) {
-          console.error("❌ Invalid key length:", keyArray.byteLength);
+          console.error("Invalid key length:", keyArray.byteLength);
           sendResponse({ ok: false, error: "invalid_key_length" });
           return;
         }
@@ -151,10 +145,8 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         );
         masterCryptoKey = k;
         await chrome.storage.session.set({ masterKey: Array.from(keyArray) });
-        console.log("🔑 Master key loaded!");
         sendResponse({ ok: true });
       } catch (err) {
-        console.error("Failed to import key:", err);
         sendResponse({ ok: false, error: "import_failed" });
       }
       return;
@@ -197,7 +189,6 @@ async function fetchEntries(hostname: string) {
     }
 
     const encryptedEntries = await response.json();
-    console.log('Pobrano zaszyfrowane wpisy z API:', encryptedEntries);
     return encryptedEntries;
     
   } catch (error) {

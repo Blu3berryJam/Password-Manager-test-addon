@@ -25,12 +25,12 @@ document.addEventListener('DOMContentLoaded', () => {
         "username": username,
         "password": password
       };
-
+      
       if (response.ok) {
-        alert(`Credentials saved (for testing):\nUsername: ${username}\nPassword: ${password}`);         
+        window.close();         
       } else {
           alert('Failed to save credentials.');
-          //window.close();
+          window.close();
         }
       });
     });

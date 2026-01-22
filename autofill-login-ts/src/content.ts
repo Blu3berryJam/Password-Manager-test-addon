@@ -277,13 +277,18 @@ class FormDetector {
     }, 2000);
   }
 }
-
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', () => {
+const isExcludedPage = window.location.href === "http://localhost:3000/home";
+if (!isExcludedPage) {
+  // Inicjalizuj FormDetector tylko jeśli NIE jesteśmy na wykluczonej stronie
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+      new FormDetector();
+    });
+  } else {
     new FormDetector();
-  });
+  }
 } else {
-  new FormDetector();
+  console.log('Truly Yours: FormDetector disabled for this page (Database Management Mode)');
 }
 
 window.addEventListener("message", (event) => {
