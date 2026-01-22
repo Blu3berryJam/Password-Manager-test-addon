@@ -144,6 +144,8 @@ class FormDetector {
   }
 
   private isPasswordField(input: HTMLInputElement): boolean {
+    if (input.type === 'hidden' || input.style.display === 'none') return false;
+
     const name = (input.name || '').toLowerCase();
     const id = (input.id || '').toLowerCase();
     const placeholder = (input.placeholder || '').toLowerCase();
@@ -160,24 +162,26 @@ class FormDetector {
   }
 
   private isUsernameField(input: HTMLInputElement): boolean {
-    const name = (input.name || '').toLowerCase();
-    const id = (input.id || '').toLowerCase();
-    const placeholder = (input.placeholder || '').toLowerCase();
-    const type = (input.type || '').toLowerCase();
+  if (input.type === 'hidden' || input.style.display === 'none') return false;
 
-    const usernameIndicators = [
-      'user', 'login', 'email', 'username', 'account', 'auth', 
-      'name', 'id', 'identifier', 'uid', 'usr', 'mail'
-    ];
+  const name = (input.name || '').toLowerCase();
+  const id = (input.id || '').toLowerCase();
+  const placeholder = (input.placeholder || '').toLowerCase();
+  const type = (input.type || '').toLowerCase();
 
-    return usernameIndicators.some(indicator => 
-      name.includes(indicator) || 
-      id.includes(indicator) || 
-      placeholder.includes(indicator) ||
-      (type === 'email') ||
-      (type === 'text' && (name.includes('user') || name.includes('login')))
-    );
-  }
+  const usernameIndicators = [
+    'user', 'login', 'email', 'username', 'account', 'auth', 
+    'name', 'id', 'identifier', 'uid', 'usr', 'mail'
+  ];
+
+  return usernameIndicators.some(indicator => 
+    name.includes(indicator) || 
+    id.includes(indicator) || 
+    placeholder.includes(indicator) ||
+    (type === 'email') ||
+    (type === 'text' && (name.includes('user') || name.includes('login')))
+  );
+}
 
   private addAutofillButton(fields: { username?: HTMLInputElement; password?: HTMLInputElement }, container: Element, index: number) {
     const existingButton = container.previousElementSibling as HTMLElement;
