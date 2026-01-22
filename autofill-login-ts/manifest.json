@@ -11,6 +11,9 @@
     "tabs",
     "http://127.0.0.1:5001/"
   ],
+  "host_permissions": [
+    "http://localhost:3000/*"
+  ],
   "background": {
     "service_worker": "background.js"
   },

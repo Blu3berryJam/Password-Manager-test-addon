@@ -20,6 +20,29 @@ function getTestCredentials() {
   ];
 }
 
+async function loadMasterKeyFromSession() {
+  const data = await chrome.storage.session.get("masterKey");
+
+  if (!data.masterKey) {
+    console.log("Vault locked");
+    return;
+  }
+
+  masterCryptoKey = await crypto.subtle.importKey(
+    "raw",
+    data.masterKey,
+    "AES-GCM",
+    false,
+    ["encrypt", "decrypt"]
+  );
+
+  console.log("Master key restored from session");
+}
+
+loadMasterKeyFromSession();
+
+
+
 // Obsługa wiadomości z content script i popup
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   (async () => {
@@ -88,6 +111,29 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       return;
     }
 
+  if (request.type === "GET_MASTER_KEY") {
+    
+    // 1. Najpierw sprawdźmy, czy mamy klucz w pamięci RAM (zmienna masterKeyRaw)
+    if (masterKeyRaw) {
+      console.log("Wysyłam klucz ze zmiennej lokalnej (RAM)");
+      sendResponse({ success: true, key: Array.from(masterKeyRaw) });
+      return false; // synchronizacja: wysyłamy od razu
+    }
+
+    // 2. Jeśli nie ma w RAM, spróbujmy pobrać z sesji
+    chrome.storage.session.get("masterKey").then((data) => {
+      if (data.masterKey) {
+        console.log("Wysyłam klucz z session storage");
+        sendResponse({ success: true, key: data.masterKey });
+      } else {
+        console.warn("Vault locked: Brak klucza w RAM i w sesji");
+        sendResponse({ success: false, error: "Vault locked" });
+      }
+    });
+
+    return true; 
+  }
+
     if (request.action === 'unlock') {
       try {
         const keyArray = new Uint8Array(Object.values(request.key) as number[]);
@@ -104,6 +150,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
           ["encrypt", "decrypt"]
         );
         masterCryptoKey = k;
+        await chrome.storage.session.set({ masterKey: Array.from(keyArray) });
         console.log("🔑 Master key loaded!");
         sendResponse({ ok: true });
       } catch (err) {
