@@ -49,7 +49,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     const key = new Uint8Array(data);
 
     // Wyślij master key do background (Twoja oryginalna logika)
-    const response = await chrome.runtime.sendMessage({ action: 'unlock', key });
+    const response = await chrome.runtime.sendMessage({ 
+      action: 'unlock', 
+      key,
+      keyFileName: file.name
+    });
     if (response.ok) {
       console.log('Key loaded!');
       await loadCredentials();
@@ -78,16 +82,18 @@ async function loadCredentials() {
     console.log('Credentials response:', response);
     
     const credentials: StoredCredential[] = response.credentials || [];
-    console.log('Loaded credentials:', credentials);
+    const keyLoaded = response.keyLoaded || false;
+    const keyName = response.keyName || 'master';
+    console.log('Loaded credentials:', credentials, 'Key loaded:', keyLoaded);
     
-    displayCredentials(credentials);
+    displayCredentials(credentials, keyLoaded, keyName);
   } catch (error) {
     console.error('Error loading credentials:', error);
-    displayCredentials([]);
+    displayCredentials([], false, 'master');
   }
 }
 
-function displayCredentials(credentials: StoredCredential[]) {
+function displayCredentials(credentials: StoredCredential[], keyLoaded: boolean, keyName: string) {
   const listContainer = document.getElementById('credentials-list');
   console.log('Displaying credentials, container:', listContainer);
   
@@ -96,19 +102,14 @@ function displayCredentials(credentials: StoredCredential[]) {
     return;
   }
 
-  if (credentials.length === 0) {
-    listContainer.innerHTML = '<p style="text-align: center; color: #888; font-size: 12px;">No test data</p>';
+  if (!keyLoaded) {
+    listContainer.innerHTML = '<p style="text-align: center; color: #888; font-size: 12px;">Key not loaded</p>';
     return;
   }
 
-  const cred = credentials[0];
-  console.log('Displaying credential:', cred);
-  
   listContainer.innerHTML = `
     <div class="credential-item">
-      <div class="credential-website">Test Data (for all websites)</div>
-      <div class="credential-username">Username: ${cred.username}</div>
-      <div class="credential-password">Password: ${cred.password}</div>
+      <div style="text-align: center; color: #27ae60; font-size: 14px;">Key loaded: ${keyName}</div>
     </div>
   `;
 }

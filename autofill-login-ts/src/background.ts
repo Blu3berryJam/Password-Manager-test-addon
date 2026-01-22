@@ -49,11 +49,17 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.action === 'getCredentials') {
       try {
         const credentials = await decypherCredentials();
+        const keyData = await chrome.storage.local.get(['keyFileName']);
+        const keyName = keyData.keyFileName || 'master';
         console.log('Sending credentials:', credentials);
-        sendResponse({ credentials });
+        sendResponse({ 
+          credentials, 
+          keyLoaded: masterCryptoKey !== null,
+          keyName: keyName
+        });
       } catch (err) {
         console.error(err);
-        sendResponse({ ok: false, error: 'decrypt_failed' });
+        sendResponse({ ok: false, error: 'decrypt_failed', keyLoaded: false });
       }
       return;
     } 
@@ -145,6 +151,9 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         );
         masterCryptoKey = k;
         await chrome.storage.session.set({ masterKey: Array.from(keyArray) });
+        if (request.keyFileName) {
+          await chrome.storage.local.set({ keyFileName: request.keyFileName });
+        }
         sendResponse({ ok: true });
       } catch (err) {
         sendResponse({ ok: false, error: "import_failed" });
