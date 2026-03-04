@@ -2,8 +2,6 @@
 
 Rozszerzenie dla przeglądarek opartych na Chromium będące częścią projektu [menedżera haseł](https://github.com/MartynaKaczmarczyk/Password_Manager_Project).
 
-Wersja: 0.2.0 (Alpha)
-
 ## Funkcjonalności
 - ✓ Automatyczne wykrywanie pól formularzy (login/hasło)  
 - ✓ Przyciski "AutoFill" nad wykrytymi formularzami  
