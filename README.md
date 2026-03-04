@@ -1,16 +1,16 @@
 # 🔐 Password Autofill Extension
 
-Rozszerzenie dla przeglądarek opartych na Chromium do automatycznego wypełniania formularzy logowania danymi testowymi.
+Rozszerzenie dla przeglądarek opartych na Chromium będące częścią projektu [menedżera haseł](https://github.com/MartynaKaczmarczyk/Password_Manager_Project).
 
 Wersja: 0.2.0 (Alpha)
 
 ## Funkcjonalności
 - ✓ Automatyczne wykrywanie pól formularzy (login/hasło)  
-- ✓ Przyciski "🔐 AutoFill" nad wykrytymi formularzami  
+- ✓ Przyciski "AutoFill" nad wykrytymi formularzami  
 - ✓ Wypełnianie danymi
 - ✓ Wysyłanie na backend wpisywanych danych
 - ✓ Inteligentne wykrywanie pól (działa z niestandardowymi nazwami)  
-- ✓ Interfejs popup z opisem wtyczki  
+- ✓ Interfejs popup  
 - ✓ Generacja klucza szyfrującego
 
 ---
